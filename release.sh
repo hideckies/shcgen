@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 version="$1"
-pkg_dir="packages"
+dist_dir="dist"
 
 # ----------------------------------------------
 # Check the version specified
@@ -42,7 +42,7 @@ echo "[+] OK"
 # ----------------------------------------------
 
 rm -rf ./zig-out
-rm -rf ./$pkg_dir/* && touch ./$pkg_dir/.gitkeep
+rm -rf ./$dist_dir/* && touch ./$dist_dir/.gitkeep
 
 # ----------------------------------------------
 # Build for each target
@@ -56,9 +56,9 @@ zig build \
     -Dexe_name="shcgen" \
     -Dversion="$version"
 pkg_linux_x64="shcgen-linux-x64-v$version"
-mkdir -p $pkg_dir/$pkg_linux_x64
-cp zig-out/bin/shcgen $pkg_dir/$pkg_linux_x64/
-zip -r $pkg_dir/$pkg_linux_x64.zip $pkg_dir/$pkg_linux_x64
+mkdir -p $dist_dir/$pkg_linux_x64
+cp zig-out/bin/shcgen $dist_dir/$pkg_linux_x64/
+zip -r $dist_dir/$pkg_linux_x64.zip $dist_dir/$pkg_linux_x64
 
 if [ $? -ne 0 ]; then
     echo "[x] Failed to package $pkg_linux_x64."
@@ -73,9 +73,9 @@ zig build \
     -Dversion="$version"
 pkg_windows_x64="shcgen-windows-x64-v$version"
 echo "[+] OK"
-mkdir -p $pkg_dir/$pkg_windows_x64
-cp zig-out/bin/shcgen.exe $pkg_dir/$pkg_windows_x64/
-zip -r $pkg_dir/$pkg_windows_x64.zip $pkg_dir/$pkg_windows_x64
+mkdir -p $dist_dir/$pkg_windows_x64
+cp zig-out/bin/shcgen.exe $dist_dir/$pkg_windows_x64/
+zip -r $dist_dir/$pkg_windows_x64.zip $dist_dir/$pkg_windows_x64
 
 if [ $? -ne 0 ]; then
     echo "[x] Failed to package $pkg_linux_x64."
@@ -101,4 +101,4 @@ echo "Done."
 # ----------------------------------------------
 
 echo ""
-echo "[!] Don't forget upload the "packages" directory in "$pkg_dir" to the GitHub release page."
+echo "[!] Don't forget upload the release builds under "$dist_dir" to the GitHub release page."
