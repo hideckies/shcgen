@@ -3,4 +3,4 @@
 /zig-out
 
 /packages/*
-^/packages/.gitkeep
+!/packages/.gitkeep
