@@ -1,14 +1,15 @@
 # Shcgen
 
-A shellcode generator written in Zig. This is inspired by MSFVenom.
-
-<br />
+A shellcode generator written in Zig, inspired by MSFVenom.  
 
 ## Install
 
 Download from [releases](/releases) page.
 
-### Build from Source
+## Build
+
+We can also use build & use it from source.  
+It's required that you've already installed `zig` in your system.
 
 ```sh
 git clone https://github.com/hideckies/shcgen
@@ -16,6 +17,27 @@ cd shcgen
 zig build --release=small
 ./zig-out/bin/shcgen --help
 ```
+
+## Prerequisites
+
+Before using `shcgen`, you need to have the following installed:
+
+- `nasm`
+
+To install them, run the following:
+
+```sh
+# Debian/Ubuntu
+sudp apt install nasm
+
+# CentOS/Fedora
+sudo yum install nasm
+
+# macOS
+brew install nasm
+```
+
+For Windows, download from [NASM official release page](https://www.nasm.us/pub/nasm/releasebuilds/?C=M;O=D).
 
 ## How To Use
 
@@ -38,5 +60,4 @@ shcgen -p linux/x64/exec --cmd /bin/sh -f hex
 
 See [examples](/examples/) for more details.
 
-<br />
 
