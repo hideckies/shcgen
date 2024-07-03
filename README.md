@@ -28,7 +28,7 @@ To install them, run the following:
 
 ```sh
 # Debian/Ubuntu
-sudp apt install nasm
+sudo apt install nasm
 
 # CentOS/Fedora
 sudo yum install nasm
