@@ -58,12 +58,13 @@ zig build \
 pkg_linux_x64="shcgen-linux-x64-v$version"
 mkdir -p $dist_dir/$pkg_linux_x64
 cp zig-out/bin/shcgen $dist_dir/$pkg_linux_x64/
-zip -r $dist_dir/$pkg_linux_x64.zip $dist_dir/$pkg_linux_x64
-
+cd $dist_dir && zip -r $pkg_linux_x64.zip $pkg_linux_x64
 if [ $? -ne 0 ]; then
     echo "[x] Failed to package $pkg_linux_x64."
     exit 1
 fi
+
+cd ..
 
 zig build \
     -Dtarget=x86_64-windows \
@@ -75,12 +76,13 @@ pkg_windows_x64="shcgen-windows-x64-v$version"
 echo "[+] OK"
 mkdir -p $dist_dir/$pkg_windows_x64
 cp zig-out/bin/shcgen.exe $dist_dir/$pkg_windows_x64/
-zip -r $dist_dir/$pkg_windows_x64.zip $dist_dir/$pkg_windows_x64
-
+cd $dist_dir && zip -r $pkg_windows_x64.zip $pkg_windows_x64
 if [ $? -ne 0 ]; then
     echo "[x] Failed to package $pkg_linux_x64."
     exit 1
 fi
+
+cd ..
 
 # ----------------------------------------------
 # Push to remote repository
