@@ -42,7 +42,7 @@ echo "[+] OK"
 # ----------------------------------------------
 
 rm -rf ./zig-out
-rm -rf ./$dist_dir/* && touch ./$dist_dir/.gitkeep
+rm -rf ./$dist_dir/*
 
 # ----------------------------------------------
 # Build for each target
@@ -101,4 +101,4 @@ echo "Done."
 # ----------------------------------------------
 
 echo ""
-echo "[!] Don't forget upload the release builds under "$dist_dir" to the GitHub release page."
+echo "[!] Don't forget upload the release builds under the \"$dist_dir\" to the GitHub release page."

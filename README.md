@@ -4,12 +4,13 @@ A shellcode generator written in Zig, inspired by MSFVenom.
 
 ## Install
 
-Download from [releases](/releases) page.
+Download from [releases](/releases) page and extract zip.  
+We can use `shcgen` right away.
 
 ## Build
 
-We can also use build & use it from source.  
-It's required that you've already installed `zig` in your system.
+We can also build and use it from source.  
+Assuming that you've already installed `zig` in your system.
 
 ```sh
 git clone https://github.com/hideckies/shcgen
@@ -20,7 +21,7 @@ zig build --release=small
 
 ## Prerequisites
 
-Before using `shcgen`, you need to have the following installed:
+Before using `shcgen`, we need to have the following installed:
 
 - `nasm`
 
