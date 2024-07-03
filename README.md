@@ -4,8 +4,7 @@ A shellcode generator written in Zig, inspired by MSFVenom.
 
 ## Install
 
-Download from [releases](/releases) page and extract zip.  
-We can use `shcgen` right away.
+Download from [releases](https://github.com/hideckies/shcgen/releases/) page and extract it. We can use `shcgen` right away.
 
 ## Build
 
