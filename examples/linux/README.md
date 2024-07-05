@@ -9,7 +9,7 @@ cat cat /proc/sys/kernel/randomize_va_space
 2
 ```
 
-We need to disable it by replacing this value (`2`) to `0`:
+We need to disable it by replacing this value to `0`:
 
 ```sh
 echo 0 | sudo tee cat /proc/sys/kernel/randomize_va_space

@@ -3,41 +3,12 @@ const assembly = @import("../assembly/lib.zig");
 const common = @import("../common/lib.zig");
 const options = @import("../options/lib.zig");
 
-/// Compile assembly with nasm.
-fn compile_asm(
-    allocator: std.mem.Allocator,
-    nasm_fmt: []const u8,
-    nasm_output_temp: []const u8,
-    asm_src: []const u8,
-) !void {
-    const result = std.process.Child.run(.{
-        .allocator = allocator,
-        .argv = &.{
-            "nasm",
-            "-f",
-            nasm_fmt,
-            "-o",
-            nasm_output_temp,
-            asm_src,
-        },
-        .max_output_bytes = 1024,
-    }) catch |err| {
-        try common.stdout.print("nasm Error: {s}\n", .{@errorName(err)});
-        return err;
-    };
-    if (result.stderr.len > 0) {
-        try common.stdout.print("objdump stderr: {s}\n", .{result.stderr});
-        return;
-    }
-}
-
 /// Extract shellcode.
 // usefule command:
 //   for i in $(objdump -D /tmp/tmp.o | grep "^ " | cut -f2); do echo -n "\x$i" ; done
-fn extract_shellcode(
+pub fn extractShellcode(
     allocator: std.mem.Allocator,
     nasm_output_temp: []const u8,
-    // opts: options.Options,
 ) ![]u8 {
     var shellcode = std.ArrayList(u8).init(allocator);
     defer shellcode.deinit();
@@ -135,12 +106,13 @@ pub fn generate(
         return null;
     }
 
-    const shellcode = try extract_shellcode(
+    const shellcode = try extractShellcode(
         allocator,
         asm_dest_path,
     );
 
-    // Delete nasm output file
+    // Delete nasm src/dest file
+    try std.fs.cwd().deleteFile(asm_src_path);
     try std.fs.cwd().deleteFile(asm_dest_path);
 
     return shellcode;

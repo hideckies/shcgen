@@ -13,9 +13,10 @@ pub fn main() !void {
 
     const params = comptime clap.parseParamsComptime(
         \\--cmd             <STR>   Command to be executed. It's required for 'exec' payload.
+        \\-e, --encoder     <STR>   Encoder. Use '--list encoders' to display available encoders.
         \\-f, --format      <STR>   Output format. Use '--list formats' to display available options.
         \\-h, --help                Display the usage.
-        \\-l, --list        <STR>   Display list of formats or payloads.
+        \\-l, --list        <STR>   Display list of encoders, formats or payloads.
         \\--lhost           <STR>   Local host (default: 127.0.0.1) to be used for 'shell_reverse_tcp' payload.
         \\--lport           <INT>   Local port (default: 4444) to be used for 'shell_reverse_tcp' payload.
         \\-o, --output      <FILE>  Output file path.
@@ -43,7 +44,9 @@ pub fn main() !void {
     if (res.args.help != 0)
         return common.stdout.printUsage(&params);
     if (res.args.list) |l| {
-        if (std.mem.eql(u8, l, "formats")) {
+        if (std.mem.eql(u8, l, "encoders")) {
+            return options.encoder.printListEncoders();
+        } else if (std.mem.eql(u8, l, "formats")) {
             return options.format.printListFormats();
         } else if (std.mem.eql(u8, l, "payloads")) {
             return options.payload.printListPayloads();
@@ -66,10 +69,15 @@ pub fn main() !void {
     const allocator = arena.allocator();
 
     // Generate shellcode
-    const shellcode = try core.generate.generate(allocator, opts.?);
+    var shellcode = try core.generate.generate(allocator, opts.?);
     if (shellcode == null) {
         try common.stdout.print("[x] Shellcode generatoin failed.\n", .{});
         return;
+    }
+
+    // Encode shellcode if encoder is specified.
+    if (opts.?.encoder != null) {
+        shellcode = try core.encoder.encode(allocator, shellcode.?, opts.?);
     }
 
     // Output

@@ -1,7 +1,7 @@
 const std = @import("std");
 const common = @import("../common/lib.zig");
 
-pub fn compile_with_nasm(
+pub fn compileWithNasm(
     allocator: std.mem.Allocator,
     format: []const u8,
     asm_src_path: []const u8,
@@ -36,7 +36,4 @@ pub fn compile_with_nasm(
         try common.stdout.print("objdump stderr: {s}\n", .{result.stderr});
         return;
     }
-
-    // Delete a temp src file
-    try std.fs.cwd().deleteFile(asm_src_path);
 }

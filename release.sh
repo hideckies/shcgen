@@ -85,22 +85,33 @@ fi
 cd ..
 
 # ----------------------------------------------
-# Push to remote repository
+# Push tag to remote repository
 # ----------------------------------------------
 
-echo "[i] Push to remote repository..."
+echo "[i] Push tag v$version to remote repository..."
 git add . && git commit -m "Release v$version" && git push origin tag v$version
+if [ $? -ne 0 ]; then
+    echo "[x] Failed to push tag v$version to remote repository."
+    exit 1
+fi
+echo "[+] OK"
+
+# ----------------------------------------------
+# Also push to origin main
+# ----------------------------------------------
+
+echo "[i] Push to remote main branch..."
+git push origin main
 if [ $? -ne 0 ]; then
     echo "[x] Failed to push to remote repository."
     exit 1
 fi
 echo "[+] OK"
 
-echo "Done."
-
 # ----------------------------------------------
 # Additional message
 # ----------------------------------------------
 
 echo ""
+echo "Done."
 echo "[!] Don't forget upload the release builds under the \"$dist_dir\" to the GitHub release page."

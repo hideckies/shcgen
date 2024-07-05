@@ -2,10 +2,12 @@ const clap = @import("clap");
 const std = @import("std");
 const common = @import("../common/lib.zig");
 
+pub const encoder = @import("encoder.zig");
 pub const format = @import("format.zig");
 pub const payload = @import("payload.zig");
 
 pub const Options = struct {
+    encoder: ?[]const u8,
     format: ?[]const u8,
     payload: ?[]const u8,
     payload_exec_cmd: ?[]const u8,
@@ -16,6 +18,7 @@ pub const Options = struct {
 
 pub fn set_options(args: anytype) !?Options {
     var opts = Options{
+        .encoder = null,
         .format = null,
         .payload = null,
         .payload_exec_cmd = null,
@@ -23,6 +26,19 @@ pub fn set_options(args: anytype) !?Options {
         .lport = null,
         .output = null,
     };
+
+    // Encoder
+    if (args.encoder) |e| {
+        if (encoder.validEncoder(e)) {
+            opts.encoder = e;
+        } else {
+            try common.stdout.print(
+                "Invalid encoder: {s}\nUse '--list encoders' to display available encoders.\n",
+                .{e},
+            );
+            return null;
+        }
+    }
 
     // Format
     if (args.format) |f| {
@@ -63,7 +79,7 @@ pub fn set_options(args: anytype) !?Options {
             opts.payload_exec_cmd = c;
         } else {
             try common.stdout.print(
-                "Not enough argument: We must set '--cmd' option for 'exec' payload.\n",
+                "Not enough argument: We must set '--cmd' for this payload.\n",
                 .{},
             );
             return null;
@@ -74,9 +90,21 @@ pub fn set_options(args: anytype) !?Options {
     if (std.mem.containsAtLeast(u8, opts.payload.?, 1, "shell_reverse_tcp")) {
         if (args.lhost) |h| {
             opts.lhost = h;
+        } else {
+            try common.stdout.print(
+                "Not enough argument: We must set '--lhost' and '--lport' for this payload.\n",
+                .{},
+            );
+            return null;
         }
         if (args.lport) |p| {
             opts.lport = p;
+        } else {
+            try common.stdout.print(
+                "Not enough argument: We must set '--lhost' and '--lport' for this payload.\n",
+                .{},
+            );
+            return null;
         }
     }
 

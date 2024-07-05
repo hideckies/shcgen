@@ -70,7 +70,7 @@ pub fn compile(
     const asm_code_new = try allocator.alloc(u8, asm_code_size);
     _ = std.mem.replace(u8, asm_code_new_1, "{CMD}", cmd, asm_code_new);
 
-    try utils.compile_with_nasm(
+    try utils.compileWithNasm(
         allocator,
         "elf64",
         asm_src_path,
