@@ -7,25 +7,45 @@ pub const format = @import("format.zig");
 pub const payload = @import("payload.zig");
 
 pub const Options = struct {
+    badchars: ?[]u8,
     encoder: ?[]const u8,
     format: ?[]const u8,
     payload: ?[]const u8,
     payload_exec_cmd: ?[]const u8,
+    iterations: ?usize,
     lhost: ?[]const u8,
     lport: ?usize,
     output: ?[]const u8,
 };
 
-pub fn set_options(args: anytype) !?Options {
+pub fn setOptions(allocator: std.mem.Allocator, args: anytype) !?Options {
     var opts = Options{
-        .encoder = null,
+        .badchars = null,
+        .encoder = "xor",
         .format = null,
         .payload = null,
         .payload_exec_cmd = null,
+        .iterations = 1,
         .lhost = null,
         .lport = null,
         .output = null,
     };
+
+    // Bad Characters
+    if (args.badchars) |badchars| {
+        var arr_badchars = std.ArrayList(u8).init(allocator);
+
+        var badchars_split = std.mem.splitSequence(u8, badchars, "\\x");
+        while (badchars_split.next()) |badchar| {
+            if (std.mem.eql(u8, badchar, "")) {
+                continue;
+            }
+            const badchar_i = try std.fmt.parseInt(u8, badchar, 16);
+            try arr_badchars.append(badchar_i);
+        }
+
+        opts.badchars = arr_badchars.items;
+    }
 
     // Encoder
     if (args.encoder) |e| {
@@ -54,6 +74,11 @@ pub fn set_options(args: anytype) !?Options {
     } else {
         try common.stdout.print("No format specified. Use '-f/--format' option.\n", .{});
         return null;
+    }
+
+    // Iterations
+    if (args.iterations) |i| {
+        opts.iterations = i;
     }
 
     // Paylaod

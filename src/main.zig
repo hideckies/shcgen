@@ -12,10 +12,12 @@ pub fn main() !void {
     defer _ = gpa.deinit();
 
     const params = comptime clap.parseParamsComptime(
+        \\-b, --badchars    <STR>   Bad characters to allow the shellcode works without problems.
         \\--cmd             <STR>   Command to be executed. It's required for 'exec' payload.
         \\-e, --encoder     <STR>   Encoder. Use '--list encoders' to display available encoders.
         \\-f, --format      <STR>   Output format. Use '--list formats' to display available options.
         \\-h, --help                Display the usage.
+        \\-i, --iterations  <INT>   The number of times to encode the shellcode.
         \\-l, --list        <STR>   Display list of encoders, formats or payloads.
         \\--lhost           <STR>   Local host (default: 127.0.0.1) to be used for 'shell_reverse_tcp' payload.
         \\--lport           <INT>   Local port (default: 4444) to be used for 'shell_reverse_tcp' payload.
@@ -24,12 +26,10 @@ pub fn main() !void {
         \\-v, --version             Display the version of Shcgen.
     );
 
-    const YesNo = enum { yes, no };
     const parsers = comptime .{
         .STR = clap.parsers.string,
         .FILE = clap.parsers.string,
         .INT = clap.parsers.int(usize, 10),
-        .ANSWER = clap.parsers.enumeration(YesNo),
     };
 
     // Parse command-line
@@ -57,16 +57,16 @@ pub fn main() !void {
     if (res.args.version != 0)
         return common.stdout.printVersion();
 
-    // Set options from command line arguments.
-    const opts = try options.set_options(res.args);
-    if (opts == null) {
-        return;
-    }
-
     // Allocate memory
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const allocator = arena.allocator();
+
+    // Set options from command line arguments.
+    const opts = try options.setOptions(allocator, res.args);
+    if (opts == null) {
+        return;
+    }
 
     // Generate shellcode
     var shellcode = try core.generate.generate(allocator, opts.?);
@@ -75,7 +75,7 @@ pub fn main() !void {
         return;
     }
 
-    // Encode shellcode if encoder is specified.
+    // Encode shellcode
     if (opts.?.encoder != null) {
         shellcode = try core.encoder.encode(allocator, shellcode.?, opts.?);
     }

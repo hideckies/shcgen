@@ -19,7 +19,7 @@ pub fn printBanner() !void {
     try print("\nShcgen v{s}\n\n", .{config.version});
 }
 
-pub fn printUsage(params: *const [10]clap.Param(clap.Help)) !void {
+pub fn printUsage(params: *const [12]clap.Param(clap.Help)) !void {
     try printBanner();
 
     // USAGE

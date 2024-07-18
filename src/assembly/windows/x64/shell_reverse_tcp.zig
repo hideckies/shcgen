@@ -10,7 +10,7 @@ const options = @import("../../../options/lib.zig");
 // Reference:
 // https://github.com/rapid7/metasploit-framework/blob/master/external/source/shellcode/windows/x64/src/single/single_shell_reverse_tcp.asm
 pub const asm_code =
-    \\  cld ; Clear the destination flag
+    \\  cld                         ; Clear the destination flag
     \\  and rsp, 0xFFFFFFFFFFFFFFF0 ; Ensure RSP is 16 byte aligned
     \\  call start                  ; Call start, this pushes the address of 'api_call' onto the stack.
     \\
